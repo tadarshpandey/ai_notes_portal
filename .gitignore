@@ -1,0 +1,9 @@
+# settings.py file
+settings.py
+
+# Python
+*.pyc
+__pycache__/
+
+# virtual enviironment
+venv
