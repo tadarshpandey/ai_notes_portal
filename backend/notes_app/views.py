@@ -20,4 +20,4 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return Note.objecrs.filter(user=self.request.user)
+        return Note.objects.filter(user=self.request.user)
