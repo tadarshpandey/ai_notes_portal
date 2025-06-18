@@ -29,6 +29,10 @@ function Navbar() {
           </>
         ) : (
           <>
+            <Link to="/summarize" className="nav-link">
+            Summarizer
+            </Link>
+
             <Link to="/dashboard" className="nav-link">Dashboard</Link>
             <button className="nav-button" onClick={handleLogout}>Logout</button>
           </>

@@ -1,14 +1,18 @@
 import React from 'react';
+import NoteForm from './NoteForm';
+import { Link } from 'react-router-dom';
 
 const Dashboard = ({ onLogout }) => {
   const username = localStorage.getItem("username");
 
   return (
     <div>
-      <h2>Welcome, {username || "User"}!</h2>
-      <h6>here's this is the website for AI notes summarizer, better use for students to ready documents, notes pdfs,
-        and more to make easier their studies and all...
+      <h2 className='text-center mt-4'>Welcome, {username || "User"}!</h2>
+      <h6 className='text-center mt-4'>DON'T GIVE UP, JUST BE PERSISTENT KEEP IT UP!
       </h6>
+      <Link to="/summarize">
+      <button className="btn btn-primary w-100">Go to Summarizer</button>
+      </Link>
     </div>
   );
 };

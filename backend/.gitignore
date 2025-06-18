@@ -1,6 +1,9 @@
 # settings.py file
 settings.py
 
+# .env file
+.env
+
 # Python
 *.pyc
 __pycache__/
