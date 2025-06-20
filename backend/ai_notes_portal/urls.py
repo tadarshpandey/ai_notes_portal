@@ -28,5 +28,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     # notes_app path
     path('api/', include('notes_app.urls')),
-    path('api/', include('summarizer.urls')),
+    #path('api/', include('summarizer.urls')),
 ]

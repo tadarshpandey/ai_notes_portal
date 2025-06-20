@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from rest_framework import generics, permissions
-from .models import Note
+from .models import Note # importing Note model for summary feature execution, summary saving and summary viewing 
 from .serializers import NoteSerializer
 
 class NoteListCreateView(generics.ListCreateAPIView):
@@ -13,6 +13,7 @@ class NoteListCreateView(generics.ListCreateAPIView):
         return Note.objects.filter(user=self.request.user).order_by('-created_at')
     
     def perform_create(self, serializer):
+        print("🔥 Creating note for:", self.request.user)
         serializer.save(user=self.request.user)
 
 class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -34,33 +35,56 @@ from transformers import pipeline
 
 # Load the summarization model once globally
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
-
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def summarize_note(request):
     try:
-        text = request.data.get("text", "")
-        print("Incoming text:", text)
+        note_id = request.data.get("note_id")
+        text = request.data.get("text")
 
-        if not text:
-            return Response({"error": "No input text provided."}, status=status.HTTP_400_BAD_REQUEST)
+        if note_id:
+            # Summarize from saved note
+            note = Note.objects.get(id=note_id, user=request.user)
+            text = note.content
+        elif not text:
+            return Response({"error": "Either note_id or text is required."}, status=400)
 
-        # Hugging Face Summarization
+        # Hugging Face summarization
         result = summarizer(text, max_length=150, min_length=40, do_sample=False)
         summary = result[0]['summary_text']
 
-        return Response({"summary": summary}, status=status.HTTP_200_OK)
+        if note_id:
+            note.summary = summary
+            note.save()
 
+        return Response({"summary": summary}, status=200)
+
+    except Note.DoesNotExist:
+        return Response({"error": "Note not found."}, status=404)
     except Exception as e:
         print("🔥 Error occurred in summarize_note:", str(e))
-        print("Not working notes_app views code for ai summarizer")
         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-# Artificial Intelligence (AI) has revolutionized many industries, from healthcare to finance.
-# In healthcare, AI helps in diagnosing diseases more accurately and quickly.
-# Financial institutions use AI for fraud detection and algorithmic trading.
-# Moreover, AI-powered chatbots are improving customer service across sectors.
-# However, with its rapid growth, concerns about job displacement and ethical use have emerged.
-# Governments and organizations are now focusing on creating regulations to ensure responsible AI development.
+
+# @api_view(['POST'])
+# @permission_classes([IsAuthenticated])
+# def summarize_note(request):
+#     try:
+#         text = request.data.get("text", "")
+#         print("Incoming text:", text)
+
+#         if not text:
+#             return Response({"error": "No input text provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+#         # Hugging Face Summarization
+#         result = summarizer(text, max_length=150, min_length=40, do_sample=False)
+#         summary = result[0]['summary_text']
+
+#         return Response({"summary": summary}, status=status.HTTP_200_OK)
+
+#     except Exception as e:
+#         print("🔥 Error occurred in summarize_note:", str(e))
+#         print("Not working notes_app views code for ai summarizer")
+#         return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
