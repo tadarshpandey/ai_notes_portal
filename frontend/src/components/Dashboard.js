@@ -33,7 +33,7 @@ const Dashboard = () => {
 
       {/* Right Content */}
       <div className="main-content">
-        <h2 className="text-center mt-3">Welcome, {username || "User"}!</h2>
+        <h2 className="text-center mt-3">Welcome to dashboard, {username || "User"}!</h2>
         <h6 className="text-center text-muted mb-4">
           DON'T GIVE UP, JUST BE PERSISTENT. KEEP IT UP!
         </h6>

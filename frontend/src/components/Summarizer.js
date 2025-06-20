@@ -33,7 +33,7 @@ const Summarizer = () => {
     setSelectedNoteId(noteId);
     const selected = notes.find((n) => n.id.toString() === noteId);
     setText(selected?.content || '');
-    setSummary('');
+    setSummary(selected?.summary || ''); // Shows summary if exists
   };
 
   // ✅ Clear all fields
@@ -41,6 +41,14 @@ const Summarizer = () => {
     setSelectedNoteId('');
     setText('');
     setSummary('');
+  };
+
+  // ✅ Generate title from summary (💡 NEW LOGIC)
+  const generateTitleFromSummary = (summary) => {
+    if (!summary) return "Untitled Note";
+    const firstSentence = summary.split(/[.!?]/)[0];
+    const words = firstSentence.trim().split(/\s+/).slice(0, 10);
+    return words.join(' ') + (words.length >= 10 ? '...' : '');
   };
 
   // ✅ Summarize and save/update
@@ -87,28 +95,26 @@ const Summarizer = () => {
           );
         }
       } else {
-        // 3. Save new note if no selection
-        const shouldSave = window.confirm("No note selected. Do you want to save this as a new note?");
-        if (shouldSave) {
-          const title = prompt("Enter a title for this note:", "Untitled Note");
-          await axios.post(
-            'http://127.0.0.1:8000/api/notes/',
-            {
-              title: title || "Untitled",
-              content: text,
-              summary: generatedSummary,
+        // ✅ No note selected: auto-generate smart title from summary (💡 NEW LOGIC)
+        const finalTitle = generateTitleFromSummary(generatedSummary);
+
+        await axios.post(
+          'http://127.0.0.1:8000/api/notes/',
+          {
+            title: finalTitle,
+            content: text,
+            summary: generatedSummary,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+              'Content-Type': 'application/json',
             },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        }
+          }
+        );
       }
 
-      fetchNotes(); // Refresh list
+      fetchNotes(); // Refresh notes list
     } catch (err) {
       alert('Error summarizing or saving note.');
       console.error(err);

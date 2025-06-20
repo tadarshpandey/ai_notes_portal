@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
 import './Navbar.css';
 
@@ -15,25 +15,34 @@ function Navbar() {
   return (
     <nav className="navbar">
       <div className="navbar-logo">
-        <Link to="/" className="nav-title">
+        <NavLink to="/" className="nav-title">
           AI Notes Summarizer
-        </Link>
+        </NavLink>
       </div>
       <div className="navbar-links">
-        <Link to="/" className="nav-link">Home</Link>
+        <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+          Home
+        </NavLink>
 
         {!isLoggedIn ? (
           <>
-            <Link to="/login" className="nav-link">Login</Link>
-            <Link to="/register" className="nav-link">Register</Link>
+            <NavLink to="/login" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Login
+            </NavLink>
+            <NavLink to="/register" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Register
+            </NavLink>
           </>
         ) : (
           <>
-            <Link to="/summarize" className="nav-link">
-            Summarizer
-            </Link>
+            <NavLink to="/summarize" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Summarizer
+            </NavLink>
 
-            <Link to="/dashboard" className="nav-link">Dashboard</Link>
+            <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+              Dashboard
+            </NavLink>
+
             <button className="nav-button" onClick={handleLogout}>Logout</button>
           </>
         )}
