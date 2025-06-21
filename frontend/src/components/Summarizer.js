@@ -10,7 +10,7 @@ const Summarizer = () => {
 
   const token = localStorage.getItem('access');
 
-  // ✅ Fetch notes
+  // ✅ Fetch notes from backend
   const fetchNotes = async () => {
     try {
       const response = await axios.get('http://127.0.0.1:8000/api/notes/', {
@@ -18,91 +18,94 @@ const Summarizer = () => {
       });
       setNotes(response.data);
     } catch (err) {
-      console.error('Error fetching notes:', err);
+      console.error('❌ Error fetching notes:', err);
     }
   };
 
-  // ✅ Load notes on mount
+  // ✅ Load notes on mount or token change
   useEffect(() => {
     fetchNotes();
   }, [token]);
 
-  // ✅ Handle note selection
+  // ✅ When a note is selected from dropdown
   const handleNoteSelect = (e) => {
     const noteId = e.target.value;
     setSelectedNoteId(noteId);
+
     const selected = notes.find((n) => n.id.toString() === noteId);
     setText(selected?.content || '');
-    setSummary(selected?.summary || ''); // Shows summary if exists
+    setSummary(selected?.summary || '');
+
+    console.log("📌 Selected Note ID:", noteId); // ✅ Debug which note is selected
   };
 
-  // ✅ Clear all fields
+  // ✅ Clear form
   const handleClear = () => {
     setSelectedNoteId('');
     setText('');
     setSummary('');
   };
 
-  // ✅ Generate title from summary (💡 NEW LOGIC)
-  const generateTitleFromSummary = (summary) => {
-    if (!summary) return "Untitled Note";
-    const firstSentence = summary.split(/[.!?]/)[0];
-    const words = firstSentence.trim().split(/\s+/).slice(0, 10);
-    return words.join(' ') + (words.length >= 10 ? '...' : '');
+  // ✅ Generate unique title for new notes
+  const generateUniqueTitle = () => {
+    const rand = Math.random().toString(36).substring(2, 8);
+    const time = new Date().getTime().toString().slice(-5);
+    return `note_${rand}${time}`;
   };
 
-  // ✅ Summarize and save/update
-  
+  // ✅ Summarize and handle backend communication
   const handleSummarize = async () => {
-  if (!text.trim()) {
-    alert('Please enter or select some text.');
-    return;
-  }
-
-  setLoading(true);
-  try {
-    let finalTitle = "Untitled Note";
-    if (!selectedNoteId) {
-      const temp = text.trim().split(/[.!?\n]/)[0];
-      const words = temp.split(/\s+/).slice(0, 10);
-      finalTitle = words.join(' ') + (words.length >= 10 ? '...' : '');
+    if (!text.trim()) {
+      alert('Please enter or select some text.');
+      return;
     }
 
-    // 🔥 Call only summarize API — it also saves the note
-    const response = await axios.post(
-      'http://127.0.0.1:8000/api/summarize/',
-      {
-        text,
-        ...(selectedNoteId ? { note_id: selectedNoteId } : { title: finalTitle })
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    setLoading(true);
 
-    const generatedSummary = response.data.summary || response.data.summary_text || '';
-    setSummary(generatedSummary);
+    try {
+      const isUpdating = !!selectedNoteId; // ✅ Determines if we're editing or creating
+      const finalTitle = isUpdating ? '' : generateUniqueTitle(); // Only generate title for new note
 
-    fetchNotes(); // Refresh list
-  } catch (err) {
-    alert('Error summarizing or saving note.');
-    console.error(err);
-  } finally {
-    setLoading(false);
-  }
-};
+      // ✅ Log what's being sent to backend
+      console.log("📤 Payload to summarize API:", isUpdating
+        ? { text, note_id: parseInt(selectedNoteId) }
+        : { text, title: finalTitle });
 
+      // 🔥 Make POST request to summarize
+      const response = await axios.post(
+        'http://127.0.0.1:8000/api/summarize/',
+        isUpdating
+          ? { text, note_id: parseInt(selectedNoteId) } // ✅ Send note_id as int
+          : { text, title: finalTitle },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+
+      const generatedSummary = response.data.summary || response.data.summary_text || '';
+      setSummary(generatedSummary);
+
+      console.log("✅ Summary received from backend:", generatedSummary);
+
+      fetchNotes(); // ✅ Refresh notes list to reflect updates
+    } catch (err) {
+      console.error('❌ Error summarizing or saving:', err);
+      alert('Error summarizing or saving note.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="container mt-4">
       <h2>🧠 AI Note Summarizer</h2>
 
-      {/* Note selection */}
+      {/* Note selection dropdown */}
       <div className="mb-3">
-        <h5>Select from previous note (optional):</h5>
+        <h5>Select a note (optional)</h5>
         <select className="form-select" value={selectedNoteId} onChange={handleNoteSelect}>
           <option value="">-- Choose a Note --</option>
           {notes.map((note) => (
@@ -113,7 +116,7 @@ const Summarizer = () => {
         </select>
       </div>
 
-      {/* Text input */}
+      {/* Text input area */}
       <div className="mb-3">
         <h5>Enter or edit text to summarize:</h5>
         <textarea
@@ -125,7 +128,7 @@ const Summarizer = () => {
         />
       </div>
 
-      {/* Buttons */}
+      {/* Action buttons */}
       <div className="mb-3">
         <button className="btn btn-primary me-2" onClick={handleSummarize} disabled={loading}>
           {loading ? 'Summarizing...' : 'Summarize Text'}
@@ -135,7 +138,7 @@ const Summarizer = () => {
         </button>
       </div>
 
-      {/* Summary Output */}
+      {/* Summary output box */}
       {summary && (
         <div className="alert alert-info mt-4">
           <h5>Summary:</h5>

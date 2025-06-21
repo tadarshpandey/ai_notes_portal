@@ -35,28 +35,45 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
 @permission_classes([IsAuthenticated])
 def summarize_note(request):
     try:
-        # Get data from request
-        text = request.data.get("text")
-        title = request.data.get("title", "Untitled Note")
+        # 👇 Safely convert note_id to int
+        note_id_raw = request.data.get("note_id", None)
+        note_id = int(note_id_raw) if note_id_raw and str(note_id_raw).isdigit() else None
+
+        text = request.data.get("text", "").strip()
+        title = request.data.get("title", "").strip()
+
+        if note_id:
+            try:
+                note = Note.objects.get(id=note_id, user=request.user)
+                text = note.content  # Overwrite text from DB
+                print("📌 Updating summary for note ID:", note_id)
+            except Note.DoesNotExist:
+                return Response({"error": "Note not found for updating."}, status=404)
 
         if not text:
-            return Response({"error": "Text is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "No input text provided."}, status=400)
 
-        # Hugging Face summarization
+        # Summarize
         result = summarizer(text, max_length=150, min_length=40, do_sample=False)
         summary = result[0]['summary_text']
 
-        # Save as a new Note — no note_id needed at all!
-        note = Note.objects.create(
-            user=request.user,
-            title=title,
-            content=text,
-            summary=summary
-        )
+        if note_id:
+            note.summary = summary
+            note.save()
+        else:
+            if not title:
+                import uuid
+                title = f"note_{uuid.uuid4().hex[:8]}"
+            print("🆕 Creating new note:", title)
+            Note.objects.create(
+                user=request.user,
+                title=title,
+                content=text,
+                summary=summary
+            )
 
-        serializer = NoteSerializer(note)
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response({"summary": summary}, status=200)
 
     except Exception as e:
         print("🔥 Error in summarize_note:", str(e))
-        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        return Response({"error": str(e)}, status=500)
