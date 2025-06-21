@@ -52,76 +52,49 @@ const Summarizer = () => {
   };
 
   // ✅ Summarize and save/update
+  
   const handleSummarize = async () => {
-    if (!text.trim()) {
-      alert('Please enter or select some text.');
-      return;
+  if (!text.trim()) {
+    alert('Please enter or select some text.');
+    return;
+  }
+
+  setLoading(true);
+  try {
+    let finalTitle = "Untitled Note";
+    if (!selectedNoteId) {
+      const temp = text.trim().split(/[.!?\n]/)[0];
+      const words = temp.split(/\s+/).slice(0, 10);
+      finalTitle = words.join(' ') + (words.length >= 10 ? '...' : '');
     }
 
-    setLoading(true);
-    try {
-      // 1. Summarize via backend
-      const response = await axios.post(
-        'http://127.0.0.1:8000/api/summarize/',
-        { text },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            'Content-Type': 'application/json',
-          },
-        }
-      );
-
-      const generatedSummary = response.data.summary;
-      setSummary(generatedSummary);
-
-      // 2. Update existing note if selected
-      if (selectedNoteId) {
-        const existingNote = notes.find((n) => n.id.toString() === selectedNoteId);
-        if (existingNote) {
-          await axios.put(
-            `http://127.0.0.1:8000/api/notes/${selectedNoteId}/`,
-            {
-              title: existingNote.title,
-              content: text,
-              summary: generatedSummary,
-            },
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-        }
-      } else {
-        // ✅ No note selected: auto-generate smart title from summary (💡 NEW LOGIC)
-        const finalTitle = generateTitleFromSummary(generatedSummary);
-
-        await axios.post(
-          'http://127.0.0.1:8000/api/notes/',
-          {
-            title: finalTitle,
-            content: text,
-            summary: generatedSummary,
-          },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
+    // 🔥 Call only summarize API — it also saves the note
+    const response = await axios.post(
+      'http://127.0.0.1:8000/api/summarize/',
+      {
+        text,
+        ...(selectedNoteId ? { note_id: selectedNoteId } : { title: finalTitle })
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
       }
+    );
 
-      fetchNotes(); // Refresh notes list
-    } catch (err) {
-      alert('Error summarizing or saving note.');
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
-  };
+    const generatedSummary = response.data.summary || response.data.summary_text || '';
+    setSummary(generatedSummary);
+
+    fetchNotes(); // Refresh list
+  } catch (err) {
+    alert('Error summarizing or saving note.');
+    console.error(err);
+  } finally {
+    setLoading(false);
+  }
+};
+
 
   return (
     <div className="container mt-4">
@@ -129,7 +102,7 @@ const Summarizer = () => {
 
       {/* Note selection */}
       <div className="mb-3">
-        <h5>Select a note (optional)</h5>
+        <h5>Select from previous note (optional):</h5>
         <select className="form-select" value={selectedNoteId} onChange={handleNoteSelect}>
           <option value="">-- Choose a Note --</option>
           {notes.map((note) => (
