@@ -16,7 +16,7 @@ const Landing = () => {
         <>
           <h3>Hello, {username}</h3>
           <button className="btn btn-primary me-2" onClick={() => navigate('/dashboard')}>Go to Dashboard</button>
-          <button className="btn btn-secondary" onClick={logout}>Logout</button>
+          
         </>
       ) : (
         <>

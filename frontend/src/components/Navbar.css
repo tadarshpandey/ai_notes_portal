@@ -3,7 +3,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: #343a40;
+  background-color: #292929;
   color: #fff;
   position: fixed;
   top: 0;
@@ -48,6 +48,6 @@
 }
 .nav-link.active {
   font-weight: bold;
-  color: #007bff; /* Bootstrap primary blue */
-  border-bottom: 2px solid #007bff;
+  color: #f7f700ab; /* Bootstrap primary blue */
+  border-bottom: 2px solid #f7f700ab;
 }

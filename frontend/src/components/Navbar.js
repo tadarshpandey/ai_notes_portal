@@ -35,9 +35,7 @@ function Navbar() {
           </>
         ) : (
           <>
-            <NavLink to="/summarize" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
-              Summarizer
-            </NavLink>
+            
 
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Dashboard

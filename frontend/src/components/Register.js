@@ -78,7 +78,9 @@ function Register() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="p-4 border rounded" style={{ maxWidth: '400px', margin: 'auto', marginTop: '50px' }}>
+    <div>
+      <h1 style={{ textAlign: 'center', marginTop: '20px', color: '#808000' }}> A.I. Notes Portal </h1>
+      <form onSubmit={handleSubmit} className="p-4 border rounded" style={{ maxWidth: '400px', margin: 'auto', marginTop: '50px' }}>
       <h3 className="mb-3 text-center">Register</h3>
       
       <input
@@ -124,7 +126,11 @@ function Register() {
       />
       
       <button type="submit" className="btn btn-secondary w-100">Register</button>
+      <p className="text-sm text-gray-600 mt-2">
+        Already Registered? <a href="/login" className="text-blue-500 hover:underline">Login</a>
+      </p>
     </form>
+    </div>
   );
 }
 

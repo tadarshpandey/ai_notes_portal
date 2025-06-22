@@ -24,7 +24,11 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route 
             path="/summarize" 
-            element={<Summarizer />}           />
+            element={
+            <ProtectedRoute>
+              <Summarizer />
+            </ProtectedRoute>}  
+          />
           <Route
             path="/dashboard"
             element={
