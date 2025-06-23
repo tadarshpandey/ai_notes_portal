@@ -16,7 +16,7 @@ function Login() {
       localStorage.setItem("refresh", data.refresh);
       localStorage.setItem("username", form.username);
       login(); // update global auth state
-      navigate('/dashboard'); // redirect to dashboard
+      navigate('/'); // redirect to dashboard
     } catch (err) {
       alert("Login failed.");
     }

@@ -39,18 +39,11 @@ const Dashboard = () => {
         </h6>
         {/* Go to Summarizer button */}
         <div className="text-center mt-4">
-          <Link to="/summarize">
-            <button className="btn btn-primary btn-lg fixed-width-button">
-              Go to Summarizer
-            </button>
-          </Link>
+          {/* Note viewer */}
+        <NoteViewer note={selectedNote} />
         </div>
         {/* ✅ Create New Note Form */}
-        <NoteForm onNoteCreated={(newNote) => console.log("New note created:", newNote)} />
-        
-        {/* Note viewer */}
-        <NoteViewer note={selectedNote} />
-
+        {/* <NoteForm onNoteCreated={(newNote) => console.log("New note created:", newNote)} /> */}
         
       </div>
     </div>
