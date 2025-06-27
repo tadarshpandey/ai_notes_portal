@@ -2,42 +2,42 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 
-/**other imports... */
-import Navbar from './components/Navbar'; // new
+import Navbar from './components/Navbar';
 import Landing from './components/Landing';
 import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 import Summarizer from './components/Summarizer';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-
-        <Navbar />{/*new */}
-        <div style={{ paddingTop: '80px'}}>
-        <Routes>
-          <Route path="/" element={<Landing />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route 
-            path="/summarize" 
-            element={
-            <ProtectedRoute>
-              <Summarizer />
-            </ProtectedRoute>}  
-          />
-          <Route
-            path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <Dashboard />
-              </ProtectedRoute>
-            }
-          />
-        </Routes>
+        <Navbar />
+        <div style={{ paddingTop: '80px' }}>
+          <Routes>
+            <Route path="/" element={<Landing />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route
+              path="/dashboard"
+              element={
+                <ProtectedRoute>
+                  <Dashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/summarize"
+              element={
+                <ProtectedRoute>
+                  <Summarizer />
+                </ProtectedRoute>
+              }
+            />
+            <Route path="*" element={<h2 className="text-center">404 - Page Not Found</h2>} />
+          </Routes>
         </div>
       </Router>
     </AuthProvider>

@@ -4,7 +4,10 @@ import { AuthContext } from '../context/AuthContext';
 
 const ProtectedRoute = ({ children }) => {
   const { isLoggedIn } = useContext(AuthContext);
-  return isLoggedIn ? children : <Navigate to="/login" />;
+  const token = localStorage.getItem('access_token');
+
+  // Only allow if user is logged in AND token exists
+  return (isLoggedIn && token) ? children : <Navigate to="/login" />;
 };
 
 export default ProtectedRoute;

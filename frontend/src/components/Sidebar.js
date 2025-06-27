@@ -1,17 +1,14 @@
-
+// src/components/Sidebar.js
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import axiosInstance from '../api/axiosInstance'; // ✅ use shared instance
 import './Sidebar.css';
 
 const Sidebar = ({ onNoteSelect }) => {
   const [notes, setNotes] = useState([]);
 
   const fetchNotes = async () => {
-    const token = localStorage.getItem('access');
     try {
-      const res = await axios.get('http://127.0.0.1:8000/api/notes/', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
+      const res = await axiosInstance.get('notes/'); // ✅ no need to manually set headers
       setNotes(res.data);
     } catch (err) {
       console.error('Error fetching notes:', err);

@@ -3,15 +3,14 @@ import Sidebar from '../components/Sidebar';
 import NoteViewer from '../components/NoteViewer';
 import { Link, useNavigate } from 'react-router-dom';
 import { checkAuthAndRefresh } from '../utils/checkAuthAndRefresh';
+import axiosInstance from '../api/axiosInstance'; // ✅ added this
 import './Dashboard.css';
-
-//saving ntes to access it later...
-import NoteForm from '../components/NoteForm';
 
 const Dashboard = () => {
   const [selectedNote, setSelectedNote] = useState(null);
+  const [notes, setNotes] = useState([]); // ✅ to hold notes list
   const username = localStorage.getItem("username");
-  const navigate = useNavigate(); // ✅ called inside the component
+  const navigate = useNavigate();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -20,16 +19,30 @@ const Dashboard = () => {
         alert("Session expired, please login again.");
         localStorage.clear();
         navigate('/login');
+      } else {
+        fetchNotes(); // ✅ fetch notes after auth
+      }
+    };
+
+    const fetchNotes = async () => {
+      try {
+        const res = await axiosInstance.get('notes/');
+        setNotes(res.data);
+        if (res.data.length > 0) {
+          setSelectedNote(res.data[0]); // ✅ auto-select first note
+        }
+      } catch (err) {
+        console.error("Failed to load notes", err);
       }
     };
 
     checkAuth();
-  }, [navigate]); // ✅ include navigate in dependency array
+  }, [navigate]);
 
   return (
     <div className="dashboard">
       {/* Left Sidebar */}
-      <Sidebar onNoteSelect={setSelectedNote} />
+      <Sidebar notes={notes} onNoteSelect={setSelectedNote} />
 
       {/* Right Content */}
       <div className="main-content">
@@ -37,14 +50,11 @@ const Dashboard = () => {
         <h6 className="text-center text-muted mb-4">
           DON'T GIVE UP, JUST BE PERSISTENT. KEEP IT UP!
         </h6>
-        {/* Go to Summarizer button */}
+
         <div className="text-center mt-4">
           {/* Note viewer */}
-        <NoteViewer note={selectedNote} />
+          <NoteViewer note={selectedNote} />
         </div>
-        {/* ✅ Create New Note Form */}
-        {/* <NoteForm onNoteCreated={(newNote) => console.log("New note created:", newNote)} /> */}
-        
       </div>
     </div>
   );

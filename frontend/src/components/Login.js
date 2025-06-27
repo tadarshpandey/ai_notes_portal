@@ -12,11 +12,14 @@ function Login() {
     e.preventDefault();
     try {
       const { data } = await loginAPI(form);
-      localStorage.setItem("access", data.access);
-      localStorage.setItem("refresh", data.refresh);
+
+      // ✅ Use consistent keys across app
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
       localStorage.setItem("username", form.username);
-      login(); // update global auth state
-      navigate('/'); // redirect to dashboard
+
+      login();               // ✅ Update global login state
+      navigate('/');         // ✅ Redirect to dashboard
     } catch (err) {
       alert("Login failed.");
     }
@@ -27,13 +30,14 @@ function Login() {
       <h1 style={{ textAlign: 'center', marginTop: '20px', color: '#808000' }}> A.I. Notes Portal </h1>
       <form onSubmit={handleSubmit} className="p-4 border rounded" style={{ maxWidth: '400px', margin: 'auto', marginTop: '50px' }}>
         <h3 className="mb-3 text-center">Login</h3>
-        <input className="form-control mb-3" placeholder="Username" onChange={e => setForm({ ...form, username: e.target.value })} />
-        <input className="form-control mb-3" placeholder="Password" type="password" onChange={e => setForm({ ...form, password: e.target.value })} />
+        <input className="form-control mb-3" placeholder="Username" value={form.username}
+               onChange={e => setForm({ ...form, username: e.target.value })} />
+        <input className="form-control mb-3" placeholder="Password" type="password" value={form.password}
+               onChange={e => setForm({ ...form, password: e.target.value })} />
         <button type="submit" className="btn btn-primary w-100">Login</button>
         <p className="text-sm text-gray-600 mt-2">
           New here? <a href="/register" className="text-blue-500 hover:underline">Register</a>
         </p>
-
       </form>
     </div>
   );

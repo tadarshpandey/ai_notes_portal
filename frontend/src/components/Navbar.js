@@ -8,8 +8,8 @@ function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    logout();
-    navigate('/');
+    logout();            // ✅ Clears tokens and auth state
+    navigate('/');       // ✅ Redirect to home after logout
   };
 
   return (
@@ -35,13 +35,13 @@ function Navbar() {
           </>
         ) : (
           <>
-            
-
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Dashboard
             </NavLink>
 
-            <button className="nav-button" onClick={handleLogout}>Logout</button>
+            <button className="nav-button" onClick={handleLogout}>
+              Logout
+            </button>
           </>
         )}
       </div>
