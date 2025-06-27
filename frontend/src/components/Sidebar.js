@@ -15,6 +15,19 @@ const Sidebar = ({ onNoteSelect }) => {
     }
   };
 
+
+  const handleDelete = async (id) => {
+    if (!window.confirm("Are you sure you want to delete this note?")) return;
+
+    try {
+      await axiosInstance.delete(`notes/${id}/`);
+      setNotes(notes.filter(note => note.id !== id)); // Optimistic UI update
+    } catch (err) {
+      console.error('Error deleting note:', err);
+      alert('Failed to delete note.');
+    }
+  };
+
   useEffect(() => {
     fetchNotes();
   }, []);
@@ -23,12 +36,17 @@ const Sidebar = ({ onNoteSelect }) => {
     <div className="sidebar">
       <h3>📝 My Notes</h3>
       {notes.map((note) => (
-        <div
-          key={note.id}
-          className="sidebar-item"
-          onClick={() => onNoteSelect(note)}
-        >
-          {note.title}
+        <div key={note.id} className="sidebar-item">
+          <span onClick={() => onNoteSelect(note)} style={{ cursor: 'pointer' }}>
+            {note.title}
+          </span>
+          <button
+            className="delete-btn"
+            onClick={() => handleDelete(note.id)}
+            title="Delete note"
+          >
+            🗑️
+          </button>
         </div>
       ))}
     </div>
