@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const axiosInstance = axios.create({
-  baseURL: '${process.env.REACT_APP_API_BASE_URL}/api/',  // change if using LAN IP
+  baseURL: `${process.env.REACT_APP_API_BASE_URL}/api/`,  // change if using LAN IP
 });
 
 // ✅ Automatically attach access token before each request
