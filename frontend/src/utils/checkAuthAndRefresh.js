@@ -12,7 +12,7 @@ export const checkAuthAndRefresh = async () => {
 
   try {
     // ✅ Call a protected route to test access token
-    await axios.get('http://127.0.0.1:8000/api/notes/', {
+    await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/notes/', {
       headers: { Authorization: `Bearer ${access}` },
     });
     console.log("✅ Access token valid");
@@ -23,7 +23,7 @@ export const checkAuthAndRefresh = async () => {
     if (err.response && err.response.status === 401 && refresh) {
       try {
         // ✅ Try refreshing the access token
-        const res = await axios.post('http://127.0.0.1:8000/api/token/refresh/', {
+        const res = await axios.post('${process.env.REACT_APP_API_BASE_URL}/api/token/refresh/', {
           refresh,
         });
 

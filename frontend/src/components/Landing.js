@@ -7,8 +7,8 @@ import Summarizer from './Summarizer';
 
 const Landing = () => {
   const { isLoggedIn, logout } = useContext(AuthContext);
-  const username = localStorage.getItem("username");
-  const navigate = useNavigate();
+  // const username = localStorage.getItem("username");
+  // const navigate = useNavigate();
 
 /**END */
   return (
