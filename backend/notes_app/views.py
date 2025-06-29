@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from transformers import pipeline
 from .models import Note
 from .serializers import NoteSerializer
+import fitz
 
 # 🔹 Load the summarization model once globally
 summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
@@ -77,3 +78,29 @@ def summarize_note(request):
     except Exception as e:
         print("🔥 Error in summarize_note:", str(e))
         return Response({"error": str(e)}, status=500)
+
+
+# backend logic for pdf upload in text summarization
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_pdf(request):
+    pdf_file = request.FILES.get('file')
+
+    if not pdf_file:
+        return Response({"error": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not pdf_file.name.endswith('.pdf'):
+        return Response({"error": "Only PDF files are supported."}, status= status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
+        text = ""
+        for page in doc:
+            text += page.get_text()
+        doc.close()
+
+        return Response({"extracted_text": text}, status=status.HTTP_200_OK)
+    
+    except Exception as e:
+        return Response({"error": f"Error Processing PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    

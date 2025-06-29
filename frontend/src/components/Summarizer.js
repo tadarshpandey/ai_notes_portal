@@ -1,6 +1,7 @@
 // src/components/Summarizer.js
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance'; // ✅ centralized axios instance
+import PdfUploader from './PdfUploader';  // ✅ Add this line at the top
 
 const Summarizer = () => {
   const username = localStorage.getItem("username");
@@ -103,12 +104,14 @@ const Summarizer = () => {
         </div>
 
         <div className="mb-3">
-          <button className="btn btn-primary me-2" onClick={handleSummarize} disabled={loading}>
+          <div><PdfUploader onExtractedText={setText} /></div>
+          <div><button className="btn btn-primary me-2" onClick={handleSummarize} disabled={loading}>
+            
             {loading ? 'Summarizing...' : 'Summarize Text'}
           </button>
           <button className="btn btn-secondary" onClick={handleClear}>
             Clear All
-          </button>
+          </button></div>
         </div>
       </div>
     </div>
