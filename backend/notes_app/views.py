@@ -3,7 +3,7 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from transformers import pipeline
+#from transformers import pipeline
 from .models import Note
 from .serializers import NoteSerializer
 import fitz
