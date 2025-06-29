@@ -42,6 +42,7 @@ DATABASES = {
 
 #this should be somesuspicious...
 CSRF_TRUSTED_ORIGINS = [
+    'https://ai-notes-frontend.onrender.com',
     'http://localhost:3000',
 ]
 # Application definition
