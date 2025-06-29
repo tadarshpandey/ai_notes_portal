@@ -42,7 +42,7 @@ const PdfUploader = ({ onExtractedText }) => {
 
   return (
     <div className="mb-4">
-      <h5>Upload PDF to Extract Text:</h5>
+      <h5 style={{ textAlign: 'left' }}>Upload PDF to Extract Text:</h5>
       <input type="file" accept="application/pdf" onChange={handleFileChange} />
       <button className="btn btn-success ms-2" onClick={handleUpload} disabled={uploading}>
         {uploading ? 'Uploading...' : 'Upload & Extract'}
