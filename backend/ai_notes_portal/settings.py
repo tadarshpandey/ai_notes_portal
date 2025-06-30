@@ -94,8 +94,16 @@ CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS = [ 'http://localho
 
 # for stricter security...
 CORS_ALLOWED_ORIGINS = [
+    'https://ai-notes-frontend.onrender.com',
     "http://localhost:3000",
 ]
+
+# Security
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+SECURE_SSL_REDIRECT = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+
 
 from datetime import timedelta
 
