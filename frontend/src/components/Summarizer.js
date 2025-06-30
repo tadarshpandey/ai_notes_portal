@@ -31,10 +31,13 @@ const Summarizer = () => {
     setSelectedNoteId(noteId);
 
     const selected = notes.find((n) => n.id.toString() === noteId);
-    setText(selected?.content || '');
-    setSummary(selected?.summary || '');
-
-    console.log("📌 Selected Note ID:", noteId);
+    if (selected) {
+      setText(selected.content || '');
+      setSummary(selected.summary || '');
+    } else {
+      setText('');
+      setSummary('');
+    }
   };
 
   const handleClear = () => {
@@ -67,19 +70,15 @@ const Summarizer = () => {
 
     try {
       const isUpdating = !!selectedNoteId;
-      const finalTitle = isUpdating ? '' : generateUniqueTitle();
+      const payload = isUpdating
+        ? { text, note_id: parseInt(selectedNoteId) }
+        : { text, title: generateUniqueTitle() };
 
-      const response = await axiosInstance.post(
-        'summarize/',
-        isUpdating
-          ? { text, note_id: parseInt(selectedNoteId) }
-          : { text, title: finalTitle }
-      );
+      const response = await axiosInstance.post('summarize/', payload);
 
       const generatedSummary = response.data.summary || response.data.summary_text || '';
       setSummary(generatedSummary);
-      console.log("✅ Summary received from backend:", generatedSummary);
-      fetchNotes();
+      await fetchNotes();
     } catch (err) {
       console.error('❌ Error summarizing or saving:', err);
       alert('Error summarizing or saving note.');
@@ -94,7 +93,7 @@ const Summarizer = () => {
 
   return (
     <div className="summarizer-container">
-      <h3 className="greeting">Hello, {username}</h3>
+      <h3 className="greeting">Hello, {username || "User"} 👋</h3>
 
       <div className="mb-3">
         <input
@@ -136,15 +135,23 @@ const Summarizer = () => {
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <div className="action-bar">
+        <div className="action-bar mt-3">
           <PdfUploader onExtractedText={setText} />
-          <button className="btn btn-primary me-2" onClick={handleSummarize} disabled={loading}>
+          <button
+            className="btn btn-primary me-2"
+            onClick={handleSummarize}
+            disabled={loading}
+          >
             {loading ? 'Summarizing...' : 'Summarize'}
           </button>
           <button className="btn btn-secondary me-2" onClick={handleClear}>
             Clear
           </button>
-          <button className="btn btn-success" onClick={handleExport} disabled={!summary}>
+          <button
+            className="btn btn-success"
+            onClick={handleExport}
+            disabled={!summary}
+          >
             Export Summary
           </button>
         </div>
