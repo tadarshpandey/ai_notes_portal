@@ -6,7 +6,13 @@ from rest_framework_simplejwt.views import (
 )
 from users.views import RegisterView  # Make sure you have 'users' app and RegisterView
 
+from django.http import JsonResponse
+
+def root_view(request):
+    return JsonResponse({"status": "ok"})
+
 urlpatterns = [
+    path('', root_view),  # This makes '/' respond with status ok
     path('admin/', admin.site.urls),
 
     # Auth-related endpoints
