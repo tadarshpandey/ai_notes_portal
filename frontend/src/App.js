@@ -17,7 +17,7 @@ function App() {
         <Navbar />
         <div style={{ paddingTop: '80px' }}>
           <Routes>
-            <Route path="/ai-notes-portal" element={<Landing />} />
+            <Route path="/" element={<Landing />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route
