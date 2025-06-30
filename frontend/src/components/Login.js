@@ -2,7 +2,6 @@ import { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { login as loginAPI } from '../api/auth';
 import { AuthContext } from '../context/AuthContext';
-import { Link } from 'react-router-dom';
 
 function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
@@ -38,6 +37,7 @@ function Login() {
         <input
           className="form-control mb-3"
           placeholder="Username"
+          name="username"
           value={form.username}
           onChange={e => setForm({ ...form, username: e.target.value })}
           required
@@ -46,6 +46,7 @@ function Login() {
           className="form-control mb-3"
           placeholder="Password"
           type="password"
+          name="password"
           value={form.password}
           onChange={e => setForm({ ...form, password: e.target.value })}
           required
