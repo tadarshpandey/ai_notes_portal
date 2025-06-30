@@ -22,6 +22,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      console.log("📤 Sending data to backend:", form); // ⬅️ Add this line
       await registerAPI(form);
 
       const { data } = await loginAPI({
