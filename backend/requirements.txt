@@ -37,6 +37,7 @@ puremagic==1.29
 pycountry==24.6.1
 pydot==4.0.1
 PyJWT==2.9.0
+PyMuPDF==1.26.1
 pyparsing==3.2.3
 python-dateutil==2.9.0.post0
 pytz==2025.2
