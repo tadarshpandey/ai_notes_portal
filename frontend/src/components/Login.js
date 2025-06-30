@@ -36,7 +36,7 @@ function Login() {
                onChange={e => setForm({ ...form, password: e.target.value })} />
         <button type="submit" className="btn btn-primary w-100">Login</button>
         <p className="text-sm text-gray-600 mt-2">
-          New here? <a href="/register" className="text-blue-500 hover:underline">Register</a>
+          New here? <Link className="text-blue-500 hover:underline" to="/register">Register</Link>
         </p>
       </form>
     </div>
