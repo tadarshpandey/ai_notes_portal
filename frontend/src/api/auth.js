@@ -1,9 +1,8 @@
+// src/api/auth.js
 import axiosInstance from './axiosInstance';
-
-// For login, we use raw axios because no token yet
 import axios from 'axios';
 
-const API_URL = 'http://127.0.0.1:8000/api/';
+const API_URL = process.env.REACT_APP_API_BASE_URL;
 
 export const register = (userData) => {
   return axios.post(`${API_URL}register/`, userData);

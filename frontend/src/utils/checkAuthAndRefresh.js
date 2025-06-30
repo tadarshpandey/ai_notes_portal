@@ -12,7 +12,7 @@ export const checkAuthAndRefresh = async () => {
 
   try {
     // ✅ Call a protected route to test access token
-    await axios.get('${process.env.REACT_APP_API_BASE_URL}/api/notes/', {
+    await axios.get(`${process.env.REACT_APP_API_BASE_URL}/api/notes/`, {
       headers: { Authorization: `Bearer ${access}` },
     });
     console.log("✅ Access token valid");
