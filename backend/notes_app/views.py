@@ -3,13 +3,15 @@ from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from transformers import pipeline
 from .models import Note
 from .serializers import NoteSerializer
 import fitz
+import uuid
 
-# 🔹 Load the summarization model once globally
-summarizer = pipeline("summarization", model="facebook/bart-large-cnn")
+# ✅ Import Sumy tools for summarization
+from sumy.parsers.plaintext import PlaintextParser
+from sumy.nlp.tokenizers import Tokenizer
+from sumy.summarizers.lsa import LsaSummarizer
 
 # 🔹 List & Create Notes
 class NoteListCreateView(generics.ListCreateAPIView):
@@ -31,12 +33,18 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Note.objects.filter(user=self.request.user)
 
-# 🔹 AI Summarization API
+# ✅ Light-weight local summarization using Sumy
+def summarize_text_locally(text, sentence_count=3):
+    parser = PlaintextParser.from_string(text, Tokenizer("english"))
+    summarizer = LsaSummarizer()
+    summary = summarizer(parser.document, sentence_count)
+    return " ".join(str(sentence) for sentence in summary)
+
+# 🔹 AI Summarization API (now using Sumy)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def summarize_note(request):
     try:
-        # 👇 Safely convert note_id to int
         note_id_raw = request.data.get("note_id", None)
         note_id = int(note_id_raw) if note_id_raw and str(note_id_raw).isdigit() else None
 
@@ -54,16 +62,14 @@ def summarize_note(request):
         if not text:
             return Response({"error": "No input text provided."}, status=400)
 
-        # Summarize
-        result = summarizer(text, max_length=150, min_length=40, do_sample=False)
-        summary = result[0]['summary_text']
+        # ✅ Perform lightweight summarization
+        summary = summarize_text_locally(text)
 
         if note_id:
             note.summary = summary
             note.save()
         else:
             if not title:
-                import uuid
                 title = f"note_{uuid.uuid4().hex[:8]}"
             print("🆕 Creating new note:", title)
             Note.objects.create(
@@ -79,8 +85,7 @@ def summarize_note(request):
         print("🔥 Error in summarize_note:", str(e))
         return Response({"error": str(e)}, status=500)
 
-
-# backend logic for pdf upload in text summarization
+# 🔹 PDF Upload & Text Extraction
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_pdf(request):
@@ -90,7 +95,7 @@ def upload_pdf(request):
         return Response({"error": "No file uploaded."}, status=status.HTTP_400_BAD_REQUEST)
     
     if not pdf_file.name.endswith('.pdf'):
-        return Response({"error": "Only PDF files are supported."}, status= status.HTTP_400_BAD_REQUEST)
+        return Response({"error": "Only PDF files are supported."}, status=status.HTTP_400_BAD_REQUEST)
     
     try:
         doc = fitz.open(stream=pdf_file.read(), filetype="pdf")
@@ -103,4 +108,3 @@ def upload_pdf(request):
     
     except Exception as e:
         return Response({"error": f"Error Processing PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
