@@ -35,7 +35,7 @@ INSTALLED_APPS = [
 
     # Your apps
     'notes_app',
-
+    'users',
     # Third-party
     'rest_framework',
     'rest_framework_simplejwt',
