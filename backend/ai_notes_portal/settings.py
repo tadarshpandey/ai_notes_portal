@@ -29,7 +29,7 @@ import dj_database_url
 SECRET_KEY = os.environ.get("SECRET_KEY", "fallback-secret-key")
 DEBUG = os.environ.get("DEBUG", "False") == "True"
 
-ALLOWED_HOSTS = ['*']  # or set Render's domain specifically
+ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "localhost").split(" ")  # or set Render's domain specifically
 
 DATABASES = {
     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
@@ -94,8 +94,7 @@ CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS = [ 'http://localho
 
 # for stricter security...
 CORS_ALLOWED_ORIGINS = [
-    'https://ai-notes-frontend.onrender.com',
-    "http://localhost:3000",
+    os.environ.get("FRONTEND_URL", "http://localhost:3000"),
 ]
 
 # Security
