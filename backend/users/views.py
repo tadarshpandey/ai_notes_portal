@@ -9,7 +9,8 @@ class RegisterSerializer(ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        return User.objects.create_user(**validated_data)
+        user = User.objects.create_user(**validated_data)
+        return user
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
