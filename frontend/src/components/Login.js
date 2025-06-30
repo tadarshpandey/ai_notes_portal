@@ -38,9 +38,9 @@ function Login() {
                onChange={e => setForm({ ...form, password: e.target.value })} />
         <button type="submit" className="btn btn-primary w-100">Login</button>
         <p className="text-sm text-gray-600 mt-2">
-          New here? 
+          New here?<Link className="text-blue-500 hover:underline" to="/register">Register</Link>
         </p>
-        <Link className="text-blue-500 hover:underline" to="/register">Register</Link>
+        
       </form>
     </div>
   );
