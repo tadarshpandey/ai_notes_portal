@@ -17,7 +17,6 @@ djangorestframework_simplejwt==5.5.0
 docopt==0.6.2
 etelemetry==0.3.1
 filelock==3.18.0
-fitz==0.0.1.dev2
 httplib2==0.22.0
 idna==3.10
 joblib==1.5.1
@@ -55,3 +54,4 @@ traits==7.0.2
 typing_extensions==4.14.0
 tzdata==2025.2
 urllib3==2.5.0
+whitenoise==6.9.0

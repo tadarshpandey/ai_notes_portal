@@ -38,6 +38,25 @@ DATABASES = {
 
 # SECURITY WARNING: don't run with debug turned on in production!
 
+# Database
+# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ai_notes_db',
+        'USER': 'ai_notes_db_user',
+        'PASSWORD': '08/notesportal',
+        'HOST': 'localhost',
+        'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c search_path=django_schema'
+        }
+
+    }
+}
+
+
 
 
 #this should be somesuspicious...
