@@ -42,11 +42,9 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 
-
 #this should be somesuspicious...
 CSRF_TRUSTED_ORIGINS = [
-    'https://ai-notes-frontend.onrender.com',
-    'http://localhost:3000',
+    os.environ.get("FRONTEND_URL", "http://localhost:3000"),
 ]
 # Application definition
 
@@ -91,6 +89,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ALLOW_ALL_ORIGINS = True  # or use CORS_ALLOWED_ORIGINS = [ 'http://localhost:3000' ]
+
 
 # for stricter security...
 CORS_ALLOWED_ORIGINS = [
