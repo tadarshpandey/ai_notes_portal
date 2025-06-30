@@ -60,7 +60,7 @@ function Register() {
 
         <button type="submit" className="btn btn-secondary w-100">Register</button>
         <p className="text-sm text-gray-600 mt-2">
-          Already Registered? <a href="/login" className="text-blue-500 hover:underline">Login</a>
+          Already Registered? <Link className="text-blue-500 hover:underline" to="/login">Login</Link>
         </p>
       </form>
     </div>
