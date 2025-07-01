@@ -10,27 +10,30 @@ import './Dashboard.css';
 const Dashboard = () => {
   const [selectedNote, setSelectedNote] = useState(null);
   const [notes, setNotes] = useState([]);
-  const username = localStorage.getItem("username") || "User";
   const navigate = useNavigate();
+
+  const username = localStorage.getItem("username") || "User";
 
   useEffect(() => {
     const initialize = async () => {
       const isAuthenticated = await checkAuthAndRefresh();
       if (!isAuthenticated) {
-        alert("Session expired, please login again.");
+        alert("Session expired, please log in again.");
         localStorage.clear();
         navigate('/login');
         return;
       }
 
       try {
-        const res = await axiosInstance.get('notes/');
+        const res = await axiosInstance.get('notes/', {
+          withCredentials: true, // ✅ Important if using session auth
+        });
         setNotes(res.data);
         if (res.data.length > 0) {
           setSelectedNote(res.data[0]);
         }
       } catch (err) {
-        console.error("❌ Failed to load notes:", err);
+        console.error("❌ Failed to load notes:", err.response?.data || err.message);
       }
     };
 
