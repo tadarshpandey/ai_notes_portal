@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
+
+echo "⬇️ Downloading NLTK punkt..."
 python -m nltk.downloader punkt
 
-# Install dependencies
+echo "📦 Installing dependencies..."
 pip install -r requirements.txt
 
 # Collect static files (optional, if you're using Django admin or serving static)

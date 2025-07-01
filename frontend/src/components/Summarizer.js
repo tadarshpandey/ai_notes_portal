@@ -61,6 +61,12 @@ const Summarizer = () => {
   };
 
   const handleSummarize = async () => {
+
+    if (text.length > 25000) {
+      alert("Text is too long. Please shorten it.");
+      return;
+    }
+
     if (!text.trim()) {
       alert('Please enter or select some text.');
       return;
@@ -81,7 +87,8 @@ const Summarizer = () => {
       await fetchNotes();
     } catch (err) {
       console.error('❌ Error summarizing or saving:', err);
-      alert('Error summarizing or saving note.');
+      const message = err.response?.data?.detail || err.message || "Unknown error.";
+      alert(`Error summarizing note:\n${message}`);
     } finally {
       setLoading(false);
     }

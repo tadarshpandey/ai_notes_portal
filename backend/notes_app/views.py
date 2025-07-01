@@ -13,6 +13,10 @@ from sumy.parsers.plaintext import PlaintextParser
 from sumy.nlp.tokenizers import Tokenizer
 from sumy.summarizers.lsa import LsaSummarizer
 
+import nltk
+nltk.download('punkt', quiet=True)
+
+
 # 🔹 List & Create Notes
 class NoteListCreateView(generics.ListCreateAPIView):
     serializer_class = NoteSerializer
