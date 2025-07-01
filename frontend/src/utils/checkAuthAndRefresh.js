@@ -1,7 +1,6 @@
 // src/utils/checkAuthAndRefresh.js
+import { jwtDecode } from 'jwt-decode';
 import axiosInstance from '../api/axiosInstance';
-import { default as jwt_decode } from 'jwt-decode'; // ✅ Safe fallback
- // install via: npm install jwt-decode
 
 export const checkAuthAndRefresh = async () => {
   const access = localStorage.getItem('access_token');
@@ -13,7 +12,7 @@ export const checkAuthAndRefresh = async () => {
   }
 
   try {
-    const decoded = jwt_decode(access);
+    const decoded = jwtDecode(access); // ✅ fixed function name
     const now = Date.now() / 1000; // in seconds
 
     if (decoded.exp < now) {
