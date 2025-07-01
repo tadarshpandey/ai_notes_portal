@@ -8,7 +8,8 @@ from .serializers import NoteSerializer
 import fitz
 import uuid
 import nltk
-from nltk.tokenize import sent_tokenize
+from summa.summarizer import summarize
+
 
 nltk.download('punkt', quiet=True)
 
@@ -33,15 +34,16 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
         return Note.objects.filter(user=self.request.user)
 
 # ✅ Rewritten lightweight summarizer (no Sumy)
-def summarize_text_locally(text, sentence_count=3):
+
+
+def summarize_text_locally(text):
     try:
-        sentences = sent_tokenize(text)
-        if len(sentences) <= sentence_count:
-            return text
-        return " ".join(sentences[:sentence_count])
+        summary = summarize(text, ratio=0.3)  # Ratio: 30% of original
+        return summary if summary else text
     except Exception as e:
-        print("❌ Error in summarization:", e)
+        print("❌ Error in TextRank summarization:", e)
         return text
+
 
 # 🔹 AI Summarization API (local tokenizer)
 @api_view(['POST'])
