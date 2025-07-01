@@ -8,13 +8,24 @@ from .serializers import NoteSerializer
 import fitz
 import uuid
 
-# ✅ Import Sumy tools for summarization
-from sumy.parsers.plaintext import PlaintextParser
-from sumy.nlp.tokenizers import Tokenizer
-from sumy.summarizers.lsa import LsaSummarizer
 
 import nltk
 nltk.download('punkt', quiet=True)
+
+
+from nltk.tokenize import sent_tokenize
+
+def summarize_text_locally(text, sentence_count=3):
+    try:
+        # Break into sentences using NLTK
+        sentences = sent_tokenize(text)
+        if len(sentences) <= sentence_count:
+            return text
+        return " ".join(sentences[:sentence_count])
+    except Exception as e:
+        print("❌ Error in summarization:", e)
+        return text
+
 
 
 # 🔹 List & Create Notes
@@ -36,13 +47,6 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_queryset(self):
         return Note.objects.filter(user=self.request.user)
-
-# ✅ Light-weight local summarization using Sumy
-def summarize_text_locally(text, sentence_count=3):
-    parser = PlaintextParser.from_string(text, Tokenizer("english"))
-    summarizer = LsaSummarizer()
-    summary = summarizer(parser.document, sentence_count)
-    return " ".join(str(sentence) for sentence in summary)
 
 # 🔹 AI Summarization API (now using Sumy)
 @api_view(['POST'])
