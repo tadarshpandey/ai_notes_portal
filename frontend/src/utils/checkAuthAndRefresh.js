@@ -1,11 +1,10 @@
 // src/utils/checkAuthAndRefresh.js
-import axios from 'axios';
-
-const API_URL = process.env.REACT_APP_API_BASE_URL;
+import axiosInstance from '../api/axiosInstance';
+import jwt_decode from 'jwt-decode';  // install via: npm install jwt-decode
 
 export const checkAuthAndRefresh = async () => {
-  const access = localStorage.getItem('access_token');   // ✅ consistent key
-  const refresh = localStorage.getItem('refresh_token'); // ✅ consistent key
+  const access = localStorage.getItem('access_token');
+  const refresh = localStorage.getItem('refresh_token');
 
   if (!access) {
     console.log("❌ No access token");
@@ -13,30 +12,28 @@ export const checkAuthAndRefresh = async () => {
   }
 
   try {
-    // ✅ Call a protected route to test access token
-    await axios.get(`${API_URL}notes/`, {
-      headers: { Authorization: `Bearer ${access}` },
-    });
-    console.log("✅ Access token valid");
-    return true;
-  } catch (err) {
-    console.warn("⚠️ Access token check failed", err.response?.status || err.message);
+    const decoded = jwt_decode(access);
+    const now = Date.now() / 1000; // in seconds
 
-    if (err.response?.status === 401 && refresh) {
+    if (decoded.exp < now) {
+      console.warn("⚠️ Access token expired");
+      if (!refresh) return false;
+
       try {
-        // ✅ Try refreshing the access token
-        const res = await axios.post(`${API_URL}token/refresh/`, { refresh });
-
-        localStorage.setItem('access_token', res.data.access); // ✅ fixed key
-        console.log("🔁 Token refreshed successfully");
+        const res = await axiosInstance.post('token/refresh/', { refresh }, { withCredentials: true });
+        localStorage.setItem('access_token', res.data.access);
+        console.log("🔁 Token refreshed");
         return true;
-      } catch (refreshErr) {
-        console.error('❌ Token refresh failed:', refreshErr.response?.data || refreshErr.message);
+      } catch (err) {
+        console.error("❌ Refresh failed:", err.response?.data || err.message);
         return false;
       }
+    } else {
+      // Access token still valid
+      return true;
     }
-
-    console.warn("⚠️ No valid refresh token or unknown error");
+  } catch (err) {
+    console.error("❌ Invalid token or decode failed:", err);
     return false;
   }
 };
