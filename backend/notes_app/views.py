@@ -1,18 +1,17 @@
 from django.shortcuts import render
-import fitz
 from rest_framework import generics, permissions, status
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from .models import Note
 from .serializers import NoteSerializer
+import fitz
 import uuid
+import nltk
+from summa.summarizer import summarize
 
-# ✅ AI Summarization
-from transformers import pipeline
 
-# 🔹 Load the AI summarizer once (t5-base is better than t5-small)
-summarizer_pipeline = pipeline("summarization", model="t5-base")
+nltk.download('punkt', quiet=True)
 
 # 🔹 List & Create Notes
 class NoteListCreateView(generics.ListCreateAPIView):
@@ -34,18 +33,17 @@ class NoteDetailView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         return Note.objects.filter(user=self.request.user)
 
-# ✅ AI-based summarization
-def summarize_text_with_ai(text):
+# ✅ Rewritten lightweight summarizer (no Sumy)
+def summarize_text_locally(text):
     try:
-        if len(text.strip().split()) < 30:
-            return text  # Skip very short texts
-        summary = summarizer_pipeline(text, max_length=150, min_length=30, do_sample=False)
-        return summary[0]['summary_text']
+        summary = summarize(text, ratio=0.3)  # Ratio: 30% of original
+        return summary if summary else text
     except Exception as e:
-        print("❌ Error in AI summarization:", e)
+        print("❌ Error in TextRank summarization:", e)
         return text
 
-# 🔹 API: Summarize & Save Note
+
+# 🔹 AI Summarization API (local tokenizer)
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def summarize_note(request):
@@ -59,7 +57,7 @@ def summarize_note(request):
         if note_id:
             try:
                 note = Note.objects.get(id=note_id, user=request.user)
-                text = note.content
+                text = note.content  # Overwrite text from DB
                 print("📌 Updating summary for note ID:", note_id)
             except Note.DoesNotExist:
                 return Response({"error": "Note not found for updating."}, status=404)
@@ -67,7 +65,8 @@ def summarize_note(request):
         if not text:
             return Response({"error": "No input text provided."}, status=400)
 
-        summary = summarize_text_with_ai(text)
+        # ✅ Perform simple summarization
+        summary = summarize_text_locally(text)
 
         if note_id:
             note.summary = summary
