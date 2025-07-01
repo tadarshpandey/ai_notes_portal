@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+python -m nltk.downloader punkt
 
 # Install dependencies
 pip install -r requirements.txt
