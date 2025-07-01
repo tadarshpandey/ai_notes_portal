@@ -9,7 +9,7 @@ import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import Summarizer from './components/Summarizer';
 import ProtectedRoute from './components/ProtectedRoute';
-
+import About from './components/About';
 function App() {
   return (
     <AuthProvider>
@@ -18,6 +18,7 @@ function App() {
         <div style={{ paddingTop: '80px' }}>
           <Routes>
             <Route path="/" element={<Landing />} />
+            <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route

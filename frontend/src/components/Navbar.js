@@ -23,6 +23,9 @@ function Navbar() {
         <NavLink to="/" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
           Home
         </NavLink>
+        <NavLink to="/about" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
+          About
+        </NavLink>
 
         {!isLoggedIn ? (
           <>
