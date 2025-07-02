@@ -56,11 +56,11 @@ const About = () => {
 
       <p className="mt-6">
         For any queries, email us at{' '}
-        <a href="mailto:adarshsomeshwar.com" className="text-blue-600 underline hover:text-blue-800">
+        <a href="mailto:adarshsomeshwar@gmail.com" className="text-blue-600 underline hover:text-blue-800">
           adarshsomeshwar@gmail.com
         </a>
       </p>
-      
+
     </div>
   );
 };
