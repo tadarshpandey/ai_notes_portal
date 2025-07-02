@@ -55,8 +55,12 @@ const About = () => {
       </ul>
 
       <p className="mt-6">
-        Have feedback or want to contribute? MAIL-US: adarshsomeshwar@gmail.com
+        For any queries, email us at{' '}
+        <a href="mailto:adarshsomeshwar.com" className="text-blue-600 underline hover:text-blue-800">
+          adarshsomeshwar@gmail.com
+        </a>
       </p>
+      
     </div>
   );
 };
