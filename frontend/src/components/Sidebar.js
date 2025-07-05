@@ -1,7 +1,6 @@
 // src/components/Sidebar.js
 import React, { useEffect, useState, useContext } from 'react';
 import axiosInstance from '../api/axiosInstance';
-import { ThemeContext } from '../context/ThemeContext';
 import './Sidebar.css';
 
 const Sidebar = ({ onNoteSelect }) => {

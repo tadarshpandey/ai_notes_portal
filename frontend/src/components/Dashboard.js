@@ -5,7 +5,7 @@ import NoteViewer from '../components/NoteViewer';
 import { useNavigate } from 'react-router-dom';
 import { checkAuthAndRefresh } from '../utils/checkAuthAndRefresh';
 import axiosInstance from '../api/axiosInstance';
-import { ThemeContext } from '../context/ThemeContext';
+
 import './Dashboard.css';
 
 const Dashboard = () => {
