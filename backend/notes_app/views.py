@@ -122,19 +122,21 @@ def upload_pdf(request):
 
 # for password reset
 class RequestPasswordResetView(APIView):
-    permission_classes = [AllowAny]  # <-- Allow public access
+    permission_classes = [AllowAny]
+
     def post(self, request):
         email = request.data.get('email')
+        username = request.data.get('username')
         redirect_url = request.data.get('redirect_url')
+
         try:
-            user = User.objects.get(email=email)
+            user = User.objects.get(email=email, username=username)
             uid = urlsafe_base64_encode(force_bytes(user.pk))
             token = default_token_generator.make_token(user)
             reset_link = f"{redirect_url}?uid={uid}&token={token}"
-            return Response({"reset_link": reset_link}, status=status.HTTP_200_OK)
+            return Response({"reset_link": reset_link}, status=200)
         except User.DoesNotExist:
             return Response({"error": "User not found"}, status=404)
-
 
 class ResetPasswordConfirmView(APIView):
     permission_classes = [AllowAny]  # <-- Allow public access

@@ -3,6 +3,7 @@ import axiosInstance from '../api/axiosInstance';
 
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [resetLink, setResetLink] = useState(null);
   const [error, setError] = useState('');
 
@@ -11,12 +12,13 @@ const ForgotPassword = () => {
     try {
       const res = await axiosInstance.post('/password-reset/', {
         email,
+        username,
         redirect_url: window.location.origin + '/reset-password',
       });
       setResetLink(res.data.reset_link);
       setError('');
     } catch (err) {
-      setError('User not found or error occurred.');
+      setError('No user found or invalid input.');
       setResetLink(null);
     }
   };
@@ -26,6 +28,14 @@ const ForgotPassword = () => {
       <h2 className="text-xl font-bold mb-4">Forgot Password</h2>
       <form onSubmit={handleSubmit}>
         <input
+          type="text"
+          className="w-full p-2 border mb-3"
+          placeholder="Enter your username"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          required
+        />
+        <input
           type="email"
           className="w-full p-2 border mb-3"
           placeholder="Enter your email"
@@ -33,12 +43,12 @@ const ForgotPassword = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button className="bg-blue-600 text-black px-4 py-2">Get Reset Link</button>
+        <button className="bg-blue-600 text-white px-4 py-2">Get Reset Link</button>
       </form>
 
       {resetLink && (
-        <div className="mt-4">
-          <p className="text-green-700">Reset Link:</p>
+        <div className="mt-4 text-sm">
+          <p className="text-green-700 mb-1">Reset Link (dev/demo only):</p>
           <a href={resetLink} className="text-blue-500 underline">{resetLink}</a>
         </div>
       )}
