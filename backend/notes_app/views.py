@@ -16,6 +16,8 @@ from django.contrib.auth.models import User
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.utils.encoding import force_bytes, force_str
+from rest_framework.permissions import AllowAny
+
 
 nltk.download('punkt', quiet=True)
 
@@ -120,6 +122,7 @@ def upload_pdf(request):
 
 # for password reset
 class RequestPasswordResetView(APIView):
+    permission_classes = [AllowAny]  # <-- Allow public access
     def post(self, request):
         email = request.data.get('email')
         redirect_url = request.data.get('redirect_url')
@@ -134,6 +137,7 @@ class RequestPasswordResetView(APIView):
 
 
 class ResetPasswordConfirmView(APIView):
+    permission_classes = [AllowAny]  # <-- Allow public access
     def post(self, request):
         uid = request.data.get('uid')
         token = request.data.get('token')
