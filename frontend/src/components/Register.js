@@ -22,7 +22,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("📤 Sending data to backend:", form); // ⬅️ Add this line
+      console.log("📤 Sending data to backend:", form);
       await registerAPI(form);
 
       const { data } = await loginAPI({
@@ -35,10 +35,26 @@ function Register() {
       localStorage.setItem("username", form.username);
 
       login(); // Update global login state
-      navigate('/dashboard');
+      navigate('/');
     } catch (err) {
-      console.error('❌ Registration failed:', err.response?.data || err.message);
-      alert("Registration failed.");
+      const errorData = err.response?.data || {};
+      console.error('❌ Registration failed:', errorData);
+
+      if (errorData.username?.[0]?.includes("already exists")) {
+        alert("Username already exists. Please choose a different one.");
+      } else if (errorData.email?.[0]?.includes("already exists")) {
+        alert("Email already exists. Please use another email.");
+      } else if (errorData.password?.[0]?.toLowerCase().includes("too short")) {
+        alert("Password is too short. Please use a stronger password (minimum 8 characters).");
+      } else {
+        // Show first available error message, or fallback
+        const fallbackMsg =
+          errorData.username?.[0] ||
+          errorData.email?.[0] ||
+          errorData.password?.[0] ||
+          "Registration failed. Please check your inputs.";
+        alert(fallbackMsg);
+      }
     }
   };
 
