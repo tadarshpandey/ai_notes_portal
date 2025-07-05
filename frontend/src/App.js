@@ -12,6 +12,8 @@ import Dashboard from './components/Dashboard';
 import Summarizer from './components/Summarizer';
 import ProtectedRoute from './components/ProtectedRoute';
 import About from './components/About';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 function App() {
   return (
     <AuthProvider>
@@ -23,6 +25,8 @@ function App() {
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route
               path="/dashboard"
               element={

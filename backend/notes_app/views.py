@@ -9,7 +9,13 @@ import fitz
 import uuid
 import nltk
 from summa.summarizer import summarize
-
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django.utils.encoding import force_bytes, force_str
 
 nltk.download('punkt', quiet=True)
 
@@ -111,3 +117,38 @@ def upload_pdf(request):
     
     except Exception as e:
         return Response({"error": f"Error Processing PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# for password reset
+class RequestPasswordResetView(APIView):
+    def post(self, request):
+        email = request.data.get('email')
+        redirect_url = request.data.get('redirect_url')
+        try:
+            user = User.objects.get(email=email)
+            uid = urlsafe_base64_encode(force_bytes(user.pk))
+            token = default_token_generator.make_token(user)
+            reset_link = f"{redirect_url}?uid={uid}&token={token}"
+            return Response({"reset_link": reset_link}, status=status.HTTP_200_OK)
+        except User.DoesNotExist:
+            return Response({"error": "User not found"}, status=404)
+
+
+class ResetPasswordConfirmView(APIView):
+    def post(self, request):
+        uid = request.data.get('uid')
+        token = request.data.get('token')
+        password = request.data.get('password')
+
+        try:
+            uid = force_str(urlsafe_base64_decode(uid))
+            user = User.objects.get(pk=uid)
+
+            if default_token_generator.check_token(user, token):
+                user.set_password(password)
+                user.save()
+                return Response({"message": "Password reset successful"})
+            else:
+                return Response({"error": "Invalid or expired token"}, status=400)
+
+        except Exception as e:
+            return Response({"error": "Something went wrong"}, status=400)
