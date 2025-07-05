@@ -1,11 +1,11 @@
 // src/components/Sidebar.js
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import './Sidebar.css';
 
 const Sidebar = ({ onNoteSelect }) => {
   const [notes, setNotes] = useState([]);
-  const { darkMode, toggleDarkMode } = useContext(ThemeContext);
+  const [darkMode, setDarkMode] = useState(false);
 
   const fetchNotes = async () => {
     try {
@@ -37,7 +37,7 @@ const Sidebar = ({ onNoteSelect }) => {
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold">📝 My Notes</h3>
         <button
-          onClick={toggleDarkMode}
+          onClick={() => setDarkMode(!darkMode)}
           className="text-sm px-2 py-1 border rounded dark:border-white border-gray-400"
         >
           {darkMode ? '☀️' : '🌙'}
