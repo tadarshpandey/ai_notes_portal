@@ -41,9 +41,7 @@ function Navbar() {
             <NavLink to="/dashboard" className={({ isActive }) => isActive ? 'nav-link active' : 'nav-link'}>
               Dashboard
             </NavLink>
-            <NavLink to="/forgot-password" className="ml-4 text-sm text-blue-600 hover:underline">
-              Forgot Password?
-            </NavLink>
+            
             <button className="nav-button" onClick={handleLogout}>
               Logout
             </button>

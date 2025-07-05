@@ -120,42 +120,42 @@ def upload_pdf(request):
     except Exception as e:
         return Response({"error": f"Error Processing PDF: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-# for password reset
-class RequestPasswordResetView(APIView):
-    permission_classes = [AllowAny]
+# # for password reset
+# class RequestPasswordResetView(APIView):
+#     permission_classes = [AllowAny]
 
-    def post(self, request):
-        email = request.data.get('email')
-        username = request.data.get('username')
-        redirect_url = request.data.get('redirect_url')
+#     def post(self, request):
+#         email = request.data.get('email')
+#         username = request.data.get('username')
+#         redirect_url = request.data.get('redirect_url')
 
-        try:
-            user = User.objects.get(email=email, username=username)
-            uid = urlsafe_base64_encode(force_bytes(user.pk))
-            token = default_token_generator.make_token(user)
-            reset_link = f"{redirect_url}?uid={uid}&token={token}"
-            return Response({"reset_link": reset_link}, status=200)
-        except User.DoesNotExist:
-            return Response({"error": "User not found"}, status=404)
+#         try:
+#             user = User.objects.get(email=email, username=username)
+#             uid = urlsafe_base64_encode(force_bytes(user.pk))
+#             token = default_token_generator.make_token(user)
+#             reset_link = f"{redirect_url}?uid={uid}&token={token}"
+#             return Response({"reset_link": reset_link}, status=200)
+#         except User.DoesNotExist:
+#             return Response({"error": "User not found"}, status=404)
 
-class ResetPasswordConfirmView(APIView):
-    permission_classes = [AllowAny]
+# class ResetPasswordConfirmView(APIView):
+#     permission_classes = [AllowAny]
 
-    def post(self, request):
-        uid = request.data.get("uid")
-        token = request.data.get("token")
-        new_password = request.data.get("new_password")
+#     def post(self, request):
+#         uid = request.data.get("uid")
+#         token = request.data.get("token")
+#         new_password = request.data.get("new_password")
 
-        try:
-            uid = force_str(urlsafe_base64_decode(uid))
-            user = User.objects.get(pk=uid)
+#         try:
+#             uid = force_str(urlsafe_base64_decode(uid))
+#             user = User.objects.get(pk=uid)
 
-            if default_token_generator.check_token(user, token):
-                user.set_password(new_password)
-                user.save()
-                return Response({"message": "Password reset successful"})
-            else:
-                return Response({"error": "Invalid or expired token"}, status=400)
+#             if default_token_generator.check_token(user, token):
+#                 user.set_password(new_password)
+#                 user.save()
+#                 return Response({"message": "Password reset successful"})
+#             else:
+#                 return Response({"error": "Invalid or expired token"}, status=400)
 
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            return Response({"error": "Invalid token or user"}, status=400)
+#         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#             return Response({"error": "Invalid token or user"}, status=400)

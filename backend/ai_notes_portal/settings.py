@@ -18,12 +18,11 @@ DATABASES = {
     'default': dj_database_url.config(default=os.environ.get("DATABASE_URL"))
 }
 
-# CORS and CSRF setup (✅ Remove trailing slash)
+# CORS and CSRF setup (Remove trailing slash)
 FRONTEND_URL = os.environ.get("FRONTEND_URL", "http://localhost:3000").rstrip('/')
 
 CSRF_TRUSTED_ORIGINS = [FRONTEND_URL]
 CORS_ALLOWED_ORIGINS = [FRONTEND_URL]
-CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 INSTALLED_APPS = [
@@ -47,7 +46,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',  # ✅ Must be above others
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # Must be above others
     'django.contrib.sessions.middleware.SessionMiddleware',
     
     'django.middleware.common.CommonMiddleware',

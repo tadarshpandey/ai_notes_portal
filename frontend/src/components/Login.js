@@ -53,11 +53,7 @@ function Login() {
         />
 
         <button type="submit" className="btn btn-primary w-100">Login</button>
-        <div className="mt-2 text-sm text-right">
-          <Link to="/forgot-password" className="text-blue-600 hover:underline">
-            Forgot Password?
-          </Link>
-        </div>
+        
 
         <p className="text-sm text-gray-600 mt-2">
           New here? <Link className="text-blue-500 hover:underline" to="/register">Register</Link>
