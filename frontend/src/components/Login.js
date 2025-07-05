@@ -25,52 +25,40 @@ function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md">
-        <h1 className="text-3xl font-bold text-center text-indigo-700 mb-6">
-          A.I. Notes Portal
-        </h1>
+    <div className="login">
+      <h1 style={{ textAlign: 'center', marginTop: '20px', color: '#808000' }}>A.I. Notes Portal</h1>
+      <form 
+        onSubmit={handleSubmit} 
+        className="p-4 border rounded" 
+        style={{ maxWidth: '400px', margin: 'auto', marginTop: '50px' }}
+      >
+        <h3 className="mb-3 text-center">Login</h3>
 
-        <form onSubmit={handleSubmit}>
-          <div className="mb-4">
-            <input
-              type="text"
-              name="username"
-              value={form.username}
-              onChange={(e) => setForm({ ...form, username: e.target.value })}
-              placeholder="Username"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
+        <input
+          className="form-control mb-3"
+          placeholder="Username"
+          name="username"
+          value={form.username}
+          onChange={e => setForm({ ...form, username: e.target.value })}
+          required
+        />
+        <input
+          className="form-control mb-3"
+          placeholder="Password"
+          type="password"
+          name="password"
+          value={form.password}
+          onChange={e => setForm({ ...form, password: e.target.value })}
+          required
+        />
 
-          <div className="mb-4">
-            <input
-              type="password"
-              name="password"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              placeholder="Password"
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-          </div>
+        <button type="submit" className="btn btn-primary w-100">Login</button>
+        
 
-          <button
-            type="submit"
-            className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
-          >
-            Login
-          </button>
-        </form>
-
-        <p className="text-center text-gray-600 text-sm mt-4">
-          New here?{' '}
-          <Link to="/register" className="text-indigo-600 hover:underline">
-            Register
-          </Link>
+        <p className="text-sm text-gray-600 mt-2">
+          New here? <Link className="text-blue-500 hover:underline" to="/register">Register</Link>
         </p>
-      </div>
+      </form>
     </div>
   );
 }
