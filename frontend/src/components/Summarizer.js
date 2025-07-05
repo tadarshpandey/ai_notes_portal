@@ -1,8 +1,6 @@
-// src/components/Summarizer.js
 import React, { useState, useEffect } from 'react';
 import axiosInstance from '../api/axiosInstance';
 import PdfUploader from './PdfUploader';
-import './Summarizer.css';
 
 const Summarizer = () => {
   const username = localStorage.getItem("username");
@@ -12,6 +10,7 @@ const Summarizer = () => {
   const [summary, setSummary] = useState('');
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [darkMode, setDarkMode] = useState(false);
 
   const fetchNotes = async () => {
     try {
@@ -61,7 +60,6 @@ const Summarizer = () => {
   };
 
   const handleSummarize = async () => {
-
     if (text.length > 25000) {
       alert("Text is too long. Please shorten it.");
       return;
@@ -81,7 +79,6 @@ const Summarizer = () => {
         : { text, title: generateUniqueTitle() };
 
       const response = await axiosInstance.post('summarize/', payload);
-
       const generatedSummary = response.data.summary || response.data.summary_text || '';
       setSummary(generatedSummary);
       await fetchNotes();
@@ -99,70 +96,82 @@ const Summarizer = () => {
   );
 
   return (
-    <div className="summarizer-container">
-      <h3 className="greeting">Hello, {username || "User"} 👋</h3>
+    <div className={darkMode ? 'bg-gray-900 text-white min-h-screen' : 'bg-white text-black min-h-screen'}>
+      <div className="max-w-4xl mx-auto p-6">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-2xl font-bold">Hello, {username || "User"} 👋</h3>
+          <button
+            onClick={() => setDarkMode(!darkMode)}
+            className="px-4 py-1 rounded border border-gray-400 dark:border-white"
+          >
+            {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+          </button>
+        </div>
 
-      <div className="mb-3">
         <input
-          className="form-control"
           type="text"
           placeholder="Search by Keywords..."
+          className="w-full p-2 border rounded mb-4 text-black"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-      </div>
 
-      <div className="mb-3">
         <select
-          className="form-select"
+          className="w-full p-2 border rounded mb-4 text-black"
           value={selectedNoteId}
           onChange={handleNoteSelect}
         >
           <option value="">-- Select a Note --</option>
           {filteredNotes.map((note) => (
-            <option key={note.id} value={note.id}>
+            <option key={note.id} value={note.id} className="text-black">
               {note.title}
             </option>
           ))}
         </select>
-      </div>
 
-      {summary && (
-        <div className="alert alert-info mt-3 summary-box">
-          <h5>Summary:</h5>
-          <p>{summary}</p>
-        </div>
-      )}
+        {summary && (
+          <div className="bg-blue-100 text-blue-800 p-4 rounded mb-4">
+            <h5 className="font-semibold mb-2">Summary:</h5>
+            <p>{summary}</p>
+          </div>
+        )}
 
-      <div className="input-area">
         <textarea
-          className="form-control note-input"
+          className="w-full h-40 p-3 border rounded resize-none text-black"
           placeholder="Type or paste text to summarize..."
           maxLength={25000}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
-        <div className="action-bar mt-3">
+
+        <div className="flex flex-wrap gap-3 mt-4">
           <PdfUploader onExtractedText={setText} />
           <button
-            className="btn btn-primary me-2"
             onClick={handleSummarize}
             disabled={loading}
+            className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded"
           >
             {loading ? 'Summarizing...' : 'Summarize'}
           </button>
-          <button className="btn btn-secondary me-2" onClick={handleClear}>
+          <button
+            onClick={handleClear}
+            className="bg-gray-300 hover:bg-gray-400 text-black px-4 py-2 rounded"
+          >
             Clear
           </button>
           <button
-            className="btn btn-success"
             onClick={handleExport}
             disabled={!summary}
+            className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
           >
             Export Summary
           </button>
         </div>
       </div>
+
+      <footer className="text-center py-4 border-t mt-10 text-sm text-gray-600 dark:text-gray-400">
+        Made with 💡 by Adarsh Pandey | AI Notes Portal © {new Date().getFullYear()}
+      </footer>
     </div>
   );
 };

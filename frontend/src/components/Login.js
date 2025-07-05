@@ -7,6 +7,7 @@ function Login() {
   const [form, setForm] = useState({ username: '', password: '' });
   const { login } = useContext(AuthContext);
   const navigate = useNavigate();
+  const [darkMode, setDarkMode] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -25,40 +26,67 @@ function Login() {
   };
 
   return (
-    <div className="login">
-      <h1 style={{ textAlign: 'center', marginTop: '20px', color: '#808000' }}>A.I. Notes Portal</h1>
-      <form 
-        onSubmit={handleSubmit} 
-        className="p-4 border rounded" 
-        style={{ maxWidth: '400px', margin: 'auto', marginTop: '50px' }}
-      >
-        <h3 className="mb-3 text-center">Login</h3>
+    <div className={darkMode ? 'bg-gray-900 text-white min-h-screen' : 'bg-gray-100 text-black min-h-screen'}>
+      <div className="flex justify-end p-4">
+        <button
+          onClick={() => setDarkMode(!darkMode)}
+          className="px-4 py-1 rounded border border-gray-400 dark:border-white"
+        >
+          {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+        </button>
+      </div>
 
-        <input
-          className="form-control mb-3"
-          placeholder="Username"
-          name="username"
-          value={form.username}
-          onChange={e => setForm({ ...form, username: e.target.value })}
-          required
-        />
-        <input
-          className="form-control mb-3"
-          placeholder="Password"
-          type="password"
-          name="password"
-          value={form.password}
-          onChange={e => setForm({ ...form, password: e.target.value })}
-          required
-        />
+      <div className="flex items-center justify-center px-4">
+        <div className="w-full max-w-md bg-white dark:bg-gray-800 p-6 rounded-xl shadow-md">
+          <h1 className="text-3xl font-bold text-center text-indigo-700 dark:text-indigo-400 mb-6">
+            A.I. Notes Portal
+          </h1>
 
-        <button type="submit" className="btn btn-primary w-100">Login</button>
-        
+          <form onSubmit={handleSubmit}>
+            <div className="mb-4">
+              <input
+                type="text"
+                name="username"
+                value={form.username}
+                onChange={(e) => setForm({ ...form, username: e.target.value })}
+                placeholder="Username"
+                required
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+              />
+            </div>
 
-        <p className="text-sm text-gray-600 mt-2">
-          New here? <Link className="text-blue-500 hover:underline" to="/register">Register</Link>
-        </p>
-      </form>
+            <div className="mb-4">
+              <input
+                type="password"
+                name="password"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
+                placeholder="Password"
+                required
+                className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 text-black"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700 transition"
+            >
+              Login
+            </button>
+          </form>
+
+          <p className="text-center text-gray-600 dark:text-gray-300 text-sm mt-4">
+            New here?{' '}
+            <Link to="/register" className="text-indigo-600 hover:underline">
+              Register
+            </Link>
+          </p>
+        </div>
+      </div>
+
+      <footer className="text-center py-4 border-t mt-10 text-sm text-gray-600 dark:text-gray-400">
+        Made with 💡 by Adarsh Pandey | AI Notes Portal © {new Date().getFullYear()}
+      </footer>
     </div>
   );
 }
