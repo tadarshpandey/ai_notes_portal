@@ -139,22 +139,23 @@ class RequestPasswordResetView(APIView):
             return Response({"error": "User not found"}, status=404)
 
 class ResetPasswordConfirmView(APIView):
-    permission_classes = [AllowAny]  # <-- Allow public access
+    permission_classes = [AllowAny]
+
     def post(self, request):
-        uid = request.data.get('uid')
-        token = request.data.get('token')
-        password = request.data.get('password')
+        uid = request.data.get("uid")
+        token = request.data.get("token")
+        new_password = request.data.get("new_password")
 
         try:
             uid = force_str(urlsafe_base64_decode(uid))
             user = User.objects.get(pk=uid)
 
             if default_token_generator.check_token(user, token):
-                user.set_password(password)
+                user.set_password(new_password)
                 user.save()
                 return Response({"message": "Password reset successful"})
             else:
                 return Response({"error": "Invalid or expired token"}, status=400)
 
-        except Exception as e:
-            return Response({"error": "Something went wrong"}, status=400)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+            return Response({"error": "Invalid token or user"}, status=400)

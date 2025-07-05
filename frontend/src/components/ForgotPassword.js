@@ -43,7 +43,7 @@ const ForgotPassword = () => {
           onChange={(e) => setEmail(e.target.value)}
           required
         />
-        <button className="bg-blue-600 text-white px-4 py-2">Get Reset Link</button>
+        <button className="bg-blue-600 text-black px-4 py-2">Get Reset Link</button>
       </form>
 
       {resetLink && (
